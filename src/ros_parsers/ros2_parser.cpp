@@ -10,6 +10,8 @@
 #include <rosidl_typesupport_introspection_cpp/identifier.hpp>
 #include <fmt/core.h>
 
+failed;
+
 bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
 {
   auto members = static_cast<const rosidl_typesupport_introspection_cpp::MessageMembers*>(type_support->data);
