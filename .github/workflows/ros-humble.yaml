@@ -1,15 +1,15 @@
 name: ROS2 Humble
 
 on:
-  workflow_run:
-    workflows: ["Pre-commit"]
-    types: [completed]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-22.04
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
       # Set up ROS
       - uses: ros-tooling/setup-ros@v0.7
