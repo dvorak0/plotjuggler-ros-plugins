@@ -25,11 +25,13 @@ public:
     _ui->setupUi(this);
   }
 
-  Ui::PublisherSelect* ui() { return _ui; }
+  Ui::PublisherSelect* ui()
+  {
+    return _ui;
+  }
 
   ~PublisherSelectDialog()
   {
     delete _ui;
   }
 };
-

@@ -40,8 +40,7 @@ const std::vector<const char*>& DataLoadROS2::compatibleFileExtensions() const
   return _extensions;
 }
 
-bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
-                                    PJ::PlotDataMapRef& plot_map)
+bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& plot_map)
 {
   auto metadata_io = std::make_unique<rosbag2_storage::MetadataIo>();
 
@@ -71,14 +70,17 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
   }
   catch (std::runtime_error& ex)
   {
-    QMessageBox::warning(nullptr, tr("Error"), QString("rosbag::open thrown an exception:\n") + QString(ex.what()));
+    QMessageBox::warning(nullptr, tr("Error"),
+                         QString("rosbag::open thrown an exception:\n") + QString(ex.what()));
     return false;
   }
 
   QDir::setCurrent(oldPath);
 
-  // Temporarily change the current directory as a workaround for rosbag2 relative directories not working properly
-  std::vector<rosbag2_storage::TopicMetadata> topic_metadata = temp_bag_reader->get_all_topics_and_types();
+  // Temporarily change the current directory as a workaround for rosbag2 relative directories not
+  // working properly
+  std::vector<rosbag2_storage::TopicMetadata> topic_metadata =
+      temp_bag_reader->get_all_topics_and_types();
 
   std::unordered_map<std::string, std::string> topicTypesByName;
 
@@ -91,25 +93,27 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   for (const rosbag2_storage::TopicMetadata& topic : topic_metadata)
   {
-    all_topics_qt.push_back( {QString::fromStdString(topic.name),
-                              QString::fromStdString(topic.type)} );
+    all_topics_qt.push_back(
+        { QString::fromStdString(topic.name), QString::fromStdString(topic.type) });
     topicTypesByName.emplace(topic.name, topic.type);
 
     const auto& typesupport_identifier = rosidl_typesupport_cpp::typesupport_identifier;
     try
     {
-      topics_info.emplace_back( CreateTopicInfo(topic.name, topic.type) );
-
-    } catch (...) {
+      topics_info.emplace_back(CreateTopicInfo(topic.name, topic.type));
+    }
+    catch (...)
+    {
       failed_topic_type.insert(topic.type);
       blacklist_topic_name.insert(topic.type);
     }
   }
 
-  if(!failed_topic_type.empty())
+  if (!failed_topic_type.empty())
   {
-    QString msg("Can not recognize the following message types and those topics will be ignored:\n\n");
-    for(const auto& type: failed_topic_type)
+    QString msg(
+        "Can not recognize the following message types and those topics will be ignored:\n\n");
+    for (const auto& type : failed_topic_type)
     {
       msg += "  " + QString::fromStdString(type) + "\n";
     }
@@ -159,10 +163,8 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     std::string topic_type = topicTypesByName.at(topic_name);
     topic_selected.insert(topic_name);
 
-    auto ros2_parser = CreateParserROS2( *parserFactories(), 
-                                         topic_name, topic_type, plot_map);
+    auto ros2_parser = CreateParserROS2(*parserFactories(), topic_name, topic_type, plot_map);
     parser.addParser(topic_name, ros2_parser);
-
   }
 
   parser.setConfig(_config);
@@ -181,7 +183,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
       plot_map.addUserDefined("plotjuggler::rosbag2_cpp::topics_metadata")->second;
 
   // dirty trick. Store it in a one point timeseries
-  metadata_storage.pushBack( {0, std::any(topics_info) } );
+  metadata_storage.pushBack({ 0, std::any(topics_info) });
 
   auto time_prev = std::chrono::high_resolution_clock::now();
 
@@ -189,7 +191,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
   {
     auto msg = _bag_reader->read_next();
     const std::string& topic_name = msg->topic_name;
-    if(blacklist_topic_name.count(topic_name))
+    if (blacklist_topic_name.count(topic_name))
     {
       continue;
     }

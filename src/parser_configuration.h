@@ -27,12 +27,10 @@ struct RosParserConfig
   void loadFromSettings(const QSettings& settings, QString prefix);
 };
 
-
 // aggregator front-end to many parsers
 class CompositeParser
 {
-  public:
-
+public:
   void addParser(const std::string& topic_name, std::shared_ptr<PJ::MessageParser> parser);
 
   const RosParserConfig& getConfig();
@@ -41,19 +39,23 @@ class CompositeParser
 
   bool parseMessage(const std::string& topic_name, MessageRef serialized_msg, double& timestamp);
 
-  void clear() { _parsers.clear(); }
+  void clear()
+  {
+    _parsers.clear();
+  }
 
-  bool hasParser(const std::string& topic_name) { return _parsers.count(topic_name) != 0; }
+  bool hasParser(const std::string& topic_name)
+  {
+    return _parsers.count(topic_name) != 0;
+  }
 
-  protected:
-
+protected:
   std::unordered_map<std::string, std::shared_ptr<PJ::MessageParser>> _parsers;
   RosParserConfig _config;
 };
 
 bool ParseDouble(const std::string& str, double& value, bool remover_suffix, bool parse_boolean);
 
+}  // namespace PJ
 
-}
-
-#endif // PARSER_CONFIGURATION_H
+#endif  // PARSER_CONFIGURATION_H

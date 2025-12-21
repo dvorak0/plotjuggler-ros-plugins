@@ -20,7 +20,6 @@
 
 using MessageRefPtr = std::shared_ptr<rosbag2_storage::SerializedBagMessage>;
 
-
 class TopicPublisherROS2 : public PJ::StatePublisher
 {
   Q_OBJECT
@@ -55,7 +54,6 @@ public slots:
   void filterDialog();
 
 private:
-
   std::shared_ptr<rclcpp::Context> _context;
   std::unique_ptr<rclcpp::executors::MultiThreadedExecutor> _executor;
   std::shared_ptr<rclcpp::Node> _node;

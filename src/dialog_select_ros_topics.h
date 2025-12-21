@@ -21,9 +21,9 @@ class DialogSelectRosTopics : public QDialog
   Q_OBJECT
 
 public:
-
   explicit DialogSelectRosTopics(const std::vector<std::pair<QString, QString>>& topic_list,
-                                   const PJ::RosParserConfig& default_info, QWidget* parent = nullptr);
+                                 const PJ::RosParserConfig& default_info,
+                                 QWidget* parent = nullptr);
 
   ~DialogSelectRosTopics() override;
 

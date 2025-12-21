@@ -64,7 +64,8 @@ bool QNodeDialog::Connect(const std::string& ros_master_uri, const std::string& 
   if (!connected)
   {
     QMessageBox msgBox;
-    msgBox.setText(QString("Could not connect to the ros master [%1]").arg(QString::fromStdString(ros_master_uri)));
+    msgBox.setText(QString("Could not connect to the ros master [%1]")
+                       .arg(QString::fromStdString(ros_master_uri)));
     msgBox.exec();
   }
 
@@ -151,12 +152,13 @@ ros::NodeHandlePtr RosManager::getNode()
     if (!manager._node)
     {
       manager._node.reset(new ros::NodeHandle, [](ros::NodeHandle* node) {
-            delete node;
-            RosManager::get().stopROS();
-          });
+        delete node;
+        RosManager::get().stopROS();
+      });
     }
   }
-  else{
+  else
+  {
     return nullptr;
   }
   return manager._node;

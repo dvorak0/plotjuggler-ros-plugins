@@ -9,7 +9,7 @@ QT5_WRAP_UI ( COMMON_UI_SRC
     publisher_select_dialog.ui )
 
 
-add_library( commonROS STATIC 
+add_library( commonROS STATIC
    dialog_select_ros_topics.h
     dialog_select_ros_topics.cpp
     dialog_with_itemlist.h
@@ -60,6 +60,5 @@ install(TARGETS
         DataLoadROS2
         DataStreamROS2
         TopicPublisherROS2
-        DESTINATION  lib/${PROJECT_NAME}  
+        DESTINATION  lib/${PROJECT_NAME}
     )
-

@@ -5,7 +5,7 @@
 namespace PJ
 {
 
-void RosParserConfig::xmlSaveState(QDomDocument &doc, QDomElement &parent_elem) const
+void RosParserConfig::xmlSaveState(QDomDocument& doc, QDomElement& parent_elem) const
 {
   QDomElement stamp_elem = doc.createElement("use_header_stamp");
   stamp_elem.setAttribute("value", use_header_stamp ? "true" : "false");
@@ -32,7 +32,7 @@ void RosParserConfig::xmlSaveState(QDomDocument &doc, QDomElement &parent_elem) 
   parent_elem.appendChild(topics_elem);
 }
 
-void RosParserConfig::xmlLoadState(const QDomElement &parent_element)
+void RosParserConfig::xmlLoadState(const QDomElement& parent_element)
 {
   QDomElement stamp_elem = parent_element.firstChildElement("use_header_stamp");
   use_header_stamp = (stamp_elem.attribute("value") == "true");
@@ -47,15 +47,16 @@ void RosParserConfig::xmlLoadState(const QDomElement &parent_element)
   boolean_strings_to_number = (bool_elem.attribute("value") == "true");
 
   QDomElement suffix_elem = parent_element.firstChildElement("remove_suffix_from_strings");
-  remove_suffix_from_strings = (suffix_elem.attribute("value")== "true");
+  remove_suffix_from_strings = (suffix_elem.attribute("value") == "true");
 
   QDomElement topics_elem = parent_element.firstChildElement("selected_topics");
-  if(!topics_elem.isNull()) {
+  if (!topics_elem.isNull())
+  {
     topics = topics_elem.attribute("value").split(';');
   }
 }
 
-void RosParserConfig::saveToSettings(QSettings &settings, QString prefix) const
+void RosParserConfig::saveToSettings(QSettings& settings, QString prefix) const
 {
   settings.setValue(prefix + "/default_topics", topics);
   settings.setValue(prefix + "/use_header_stamp", use_header_stamp);
@@ -65,41 +66,44 @@ void RosParserConfig::saveToSettings(QSettings &settings, QString prefix) const
   settings.setValue(prefix + "/remove_suffix_from_strings", remove_suffix_from_strings);
 }
 
-void RosParserConfig::loadFromSettings(const QSettings &settings, QString prefix)
+void RosParserConfig::loadFromSettings(const QSettings& settings, QString prefix)
 {
   topics = settings.value(prefix + "/default_topics", false).toStringList();
   use_header_stamp = settings.value(prefix + "/use_header_stamp", false).toBool();
   max_array_size = settings.value(prefix + "/max_array_size", 100).toInt();
   discard_large_arrays = settings.value(prefix + "/discard_large_arrays", true).toBool();
   boolean_strings_to_number = settings.value(prefix + "/boolean_strings_to_number", true).toBool();
-  remove_suffix_from_strings = settings.value(prefix + "/remove_suffix_from_strings", true).toBool();
+  remove_suffix_from_strings =
+      settings.value(prefix + "/remove_suffix_from_strings", true).toBool();
 }
 
-void CompositeParser::addParser(const std::string& topic_name, std::shared_ptr<PJ::MessageParser> parser)
+void CompositeParser::addParser(const std::string& topic_name,
+                                std::shared_ptr<PJ::MessageParser> parser)
 {
   parser->setLargeArraysPolicy(!_config.discard_large_arrays, _config.max_array_size);
   parser->enableEmbeddedTimestamp(_config.use_header_stamp);
-  _parsers.insert( {topic_name, parser} );
+  _parsers.insert({ topic_name, parser });
 }
 
-const RosParserConfig &CompositeParser::getConfig()
+const RosParserConfig& CompositeParser::getConfig()
 {
   return _config;
 }
 
-void CompositeParser::setConfig(const RosParserConfig &config)
+void CompositeParser::setConfig(const RosParserConfig& config)
 {
   _config = config;
   // we don't need this information.
   _config.topics.clear();
-  for(auto& [name, parser]: _parsers)
+  for (auto& [name, parser] : _parsers)
   {
     parser->setLargeArraysPolicy(!config.discard_large_arrays, config.max_array_size);
     parser->enableEmbeddedTimestamp(config.use_header_stamp);
   }
 }
 
-bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef serialized_msg, double& timestamp)
+bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef serialized_msg,
+                                   double& timestamp)
 {
   auto it = _parsers.find(topic_name);
   if (it == _parsers.end())
@@ -111,44 +115,40 @@ bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef ser
   return true;
 }
 
-
-bool ParseDouble(const std::string &str,
-                 double &value,
-                 bool remover_suffix,
-                 bool parse_boolean)
+bool ParseDouble(const std::string& str, double& value, bool remover_suffix, bool parse_boolean)
 {
   bool parsed = boost::spirit::qi::parse(str.data(), str.data() + str.size(),
                                          boost::spirit::qi::double_, value);
 
-  if(!parsed && remover_suffix)
+  if (!parsed && remover_suffix)
   {
     int pos = 0;
-    while(pos < str.size())
+    while (pos < str.size())
     {
       char c = str[pos];
-      if( !std::isdigit(c) && c!= '-' && c!= '+' && c!='.')
+      if (!std::isdigit(c) && c != '-' && c != '+' && c != '.')
       {
         break;
       }
       pos++;
     }
-    if( pos < str.size() )
+    if (pos < str.size())
     {
-      parsed = boost::spirit::qi::parse(str.data(), str.data() + pos,
-                                        boost::spirit::qi::double_, value);
+      parsed =
+          boost::spirit::qi::parse(str.data(), str.data() + pos, boost::spirit::qi::double_, value);
     }
   }
 
-  if(!parsed && parse_boolean && str.size() >=4 && str.size() <=5)
+  if (!parsed && parse_boolean && str.size() >= 4 && str.size() <= 5)
   {
     std::string temp = str;
     boost::algorithm::to_lower(temp);
-    if( temp == "true" )
+    if (temp == "true")
     {
       parsed = true;
       value = 1;
     }
-    else if( temp == "false" )
+    else if (temp == "false")
     {
       parsed = true;
       value = 0;
@@ -158,4 +158,4 @@ bool ParseDouble(const std::string &str,
   return parsed;
 }
 
-}
+}  // namespace PJ

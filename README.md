@@ -33,7 +33,7 @@ Create a catkin workspace and clone the repositories:
      git clone https://github.com/PlotJuggler/plotjuggler_msgs.git
      git clone https://github.com/facontidavide/PlotJuggler.git
      git clone https://github.com/PlotJuggler/plotjuggler-ros-plugins.git
-     
+
 Now, it is time to compile:
 
     cd ~/ws_plotjuggler
@@ -43,6 +43,3 @@ Now, it is time to compile:
 # For ROS (1) users
 
 From version 2.3+, this library will support only ROS2 (Hubmle or older)
-
-    
-     

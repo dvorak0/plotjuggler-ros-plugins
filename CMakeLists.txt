@@ -73,9 +73,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 install(DIRECTORY launch
 	DESTINATION share/${PROJECT_NAME})
-    
+
 add_subdirectory( src )
 
 ament_package()
-
-

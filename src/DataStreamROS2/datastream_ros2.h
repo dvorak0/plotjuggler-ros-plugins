@@ -39,7 +39,8 @@ public:
   const std::vector<QAction*>& availableActions() override;
 
 private:
-  void messageCallback(const std::string& topic_name, std::shared_ptr<rclcpp::SerializedMessage> msg);
+  void messageCallback(const std::string& topic_name,
+                       std::shared_ptr<rclcpp::SerializedMessage> msg);
 
 private:
   std::shared_ptr<rclcpp::Context> _context;

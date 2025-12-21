@@ -10,50 +10,57 @@
 
 // function taken from rosbag2_transport
 
-rclcpp::QoS adapt_request_to_offers(
-  const std::string & topic_name, const std::vector<rclcpp::TopicEndpointInfo> & endpoints)
+rclcpp::QoS adapt_request_to_offers(const std::string& topic_name,
+                                    const std::vector<rclcpp::TopicEndpointInfo>& endpoints)
 {
   rclcpp::QoS request_qos(rmw_qos_profile_default.depth);
 
-  if (endpoints.empty()) {
+  if (endpoints.empty())
+  {
     return request_qos;
   }
   size_t num_endpoints = endpoints.size();
   size_t reliability_reliable_endpoints_count = 0;
   size_t durability_transient_local_endpoints_count = 0;
-  for (const auto & endpoint : endpoints) {
-    const auto & profile = endpoint.qos_profile().get_rmw_qos_profile();
-    if (profile.reliability == RMW_QOS_POLICY_RELIABILITY_RELIABLE) {
+  for (const auto& endpoint : endpoints)
+  {
+    const auto& profile = endpoint.qos_profile().get_rmw_qos_profile();
+    if (profile.reliability == RMW_QOS_POLICY_RELIABILITY_RELIABLE)
+    {
       reliability_reliable_endpoints_count++;
     }
-    if (profile.durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL) {
+    if (profile.durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+    {
       durability_transient_local_endpoints_count++;
     }
   }
 
   // Policy: reliability
-  if (reliability_reliable_endpoints_count == num_endpoints) {
+  if (reliability_reliable_endpoints_count == num_endpoints)
+  {
     request_qos.reliable();
-  } else {
+  }
+  else
+  {
     request_qos.best_effort();
   }
 
   // Policy: durability
   // If all publishers offer transient_local, we can request it and receive latched messages
-  if (durability_transient_local_endpoints_count == num_endpoints) {
+  if (durability_transient_local_endpoints_count == num_endpoints)
+  {
     request_qos.transient_local();
-  } else {
+  }
+  else
+  {
     request_qos.durability_volatile();
   }
 
   return request_qos;
 }
 
-DataStreamROS2::DataStreamROS2() :
-    DataStreamer(),
-    _node(nullptr),
-    _running(false),
-    _first_warning(false)
+DataStreamROS2::DataStreamROS2()
+  : DataStreamer(), _node(nullptr), _running(false), _first_warning(false)
 {
   loadDefaultSettings();
 
@@ -63,7 +70,6 @@ DataStreamROS2::DataStreamROS2() :
   auto exec_args = rclcpp::ExecutorOptions();
   exec_args.context = _context;
   _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_args, 2);
-
 }
 
 void DataStreamROS2::waitOneSecond()
@@ -210,12 +216,11 @@ DataStreamROS2::~DataStreamROS2()
   shutdown();
 }
 
-const std::vector<QAction*> &DataStreamROS2::availableActions()
+const std::vector<QAction*>& DataStreamROS2::availableActions()
 {
   static std::vector<QAction*> empty;
   return empty;
 }
-
 
 void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::string& topic_type)
 {
@@ -224,26 +229,28 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
     return;
   }
 
-  if(!_parser.hasParser(topic_name))
+  if (!_parser.hasParser(topic_name))
   {
-    _parser.addParser(topic_name, CreateParserROS2(*parserFactories(), topic_name, topic_type, dataMap()));
+    _parser.addParser(topic_name,
+                      CreateParserROS2(*parserFactories(), topic_name, topic_type, dataMap()));
   }
 
-  auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) { messageCallback(topic_name, msg); };
+  auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) {
+    messageCallback(topic_name, msg);
+  };
 
   auto publisher_info = _node->get_publishers_info_by_topic(topic_name);
   auto detected_qos = adapt_request_to_offers(topic_name, publisher_info);
 
   // double subscription, latching or not
-  auto subscription = _node->create_generic_subscription(topic_name,
-                                                         topic_type,
-                                                         detected_qos,
-                                                         bound_callback);
+  auto subscription =
+      _node->create_generic_subscription(topic_name, topic_type, detected_qos, bound_callback);
   _subscriptions[topic_name] = subscription;
   _node->get_node_topics_interface()->add_subscription(subscription, nullptr);
 }
 
-void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_ptr<rclcpp::SerializedMessage> msg)
+void DataStreamROS2::messageCallback(const std::string& topic_name,
+                                     std::shared_ptr<rclcpp::SerializedMessage> msg)
 {
   double timestamp = _node->get_clock()->now().seconds();
   try
@@ -251,18 +258,19 @@ void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_
     std::unique_lock<std::mutex> lock(mutex());
 
     auto msg_ptr = msg.get()->get_rcl_serialized_message();
-    PJ::MessageRef msg_ref( msg_ptr.buffer, msg_ptr.buffer_length );
+    PJ::MessageRef msg_ref(msg_ptr.buffer, msg_ptr.buffer_length);
 
     _parser.parseMessage(topic_name, msg_ref, timestamp);
   }
   catch (std::runtime_error& ex)
   {
-      if( _first_warning ) {
-          _first_warning = false;
-          QMessageBox::warning(nullptr, tr("Error"),
-                               QString("rosbag::open thrown an exception:\n") +
-                               QString(ex.what()) + "\nThis message will be shown only once.");
-      }
+    if (_first_warning)
+    {
+      _first_warning = false;
+      QMessageBox::warning(nullptr, tr("Error"),
+                           QString("rosbag::open thrown an exception:\n") + QString(ex.what()) +
+                               "\nThis message will be shown only once.");
+    }
   }
 
   emit dataReceived();
@@ -286,8 +294,7 @@ bool DataStreamROS2::xmlLoadState(const QDomElement& parent_element)
   return true;
 }
 
-bool DataStreamROS2::xmlSaveState(QDomDocument& doc,
-                                  QDomElement& parent_element) const
+bool DataStreamROS2::xmlSaveState(QDomDocument& doc, QDomElement& parent_element) const
 {
   _config.xmlSaveState(doc, parent_element);
   return true;
