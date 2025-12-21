@@ -59,8 +59,7 @@ rclcpp::QoS adapt_request_to_offers(const std::string& topic_name,
   return request_qos;
 }
 
-DataStreamROS2::DataStreamROS2()
-  : DataStreamer(), _node(nullptr), _running(false), _first_warning(false)
+DataStreamROS2::DataStreamROS2() : DataStreamer(), _node(nullptr), _running(false), _first_warning(false)
 {
   loadDefaultSettings();
 
@@ -231,26 +230,21 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
 
   if (!_parser.hasParser(topic_name))
   {
-    _parser.addParser(topic_name,
-                      CreateParserROS2(*parserFactories(), topic_name, topic_type, dataMap()));
+    _parser.addParser(topic_name, CreateParserROS2(*parserFactories(), topic_name, topic_type, dataMap()));
   }
 
-  auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) {
-    messageCallback(topic_name, msg);
-  };
+  auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) { messageCallback(topic_name, msg); };
 
   auto publisher_info = _node->get_publishers_info_by_topic(topic_name);
   auto detected_qos = adapt_request_to_offers(topic_name, publisher_info);
 
   // double subscription, latching or not
-  auto subscription =
-      _node->create_generic_subscription(topic_name, topic_type, detected_qos, bound_callback);
+  auto subscription = _node->create_generic_subscription(topic_name, topic_type, detected_qos, bound_callback);
   _subscriptions[topic_name] = subscription;
   _node->get_node_topics_interface()->add_subscription(subscription, nullptr);
 }
 
-void DataStreamROS2::messageCallback(const std::string& topic_name,
-                                     std::shared_ptr<rclcpp::SerializedMessage> msg)
+void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_ptr<rclcpp::SerializedMessage> msg)
 {
   double timestamp = _node->get_clock()->now().seconds();
   try

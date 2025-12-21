@@ -12,8 +12,7 @@
 
 bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
 {
-  auto members =
-      static_cast<const rosidl_typesupport_introspection_cpp::MessageMembers*>(type_support->data);
+  auto members = static_cast<const rosidl_typesupport_introspection_cpp::MessageMembers*>(type_support->data);
 
   if (members->member_count_ >= 1 && members->members_)
   {
@@ -23,11 +22,9 @@ bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
       return false;
     }
     const auto* header_members =
-        static_cast<const rosidl_typesupport_introspection_cpp::MessageMembers*>(
-            first_field.members_->data);
-    if (strcmp(header_members->message_name_, "Header") == 0 &&
-        strcmp(header_members->message_namespace_, "std_msgs::"
-                                                   "msg") == 0)
+        static_cast<const rosidl_typesupport_introspection_cpp::MessageMembers*>(first_field.members_->data);
+    if (strcmp(header_members->message_name_, "Header") == 0 && strcmp(header_members->message_namespace_, "std_msgs::"
+                                                                                                           "msg") == 0)
     {
       return true;
     }
@@ -47,8 +44,8 @@ std::string CreateSchema(const std::string& base_type)
   auto addTypeToSchema = [&](const std::string& type_name, bool add_header) {
     auto introspection_library =
         rosbag2_cpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
-    auto introspection_support = rosbag2_cpp::get_typesupport_handle(
-        type_name, "rosidl_typesupport_introspection_cpp", introspection_library);
+    auto introspection_support =
+        rosbag2_cpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp", introspection_library);
 
     if (add_header)
     {
@@ -150,25 +147,20 @@ TopicInfo CreateTopicInfo(const std::string& topic_name, const std::string& type
   info.topic_name = topic_name;
   info.type = type_name;
 
-  info.introspection_library =
-      rosbag2_cpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
-  info.introspection_support = rosbag2_cpp::get_typesupport_handle(
-      type_name, "rosidl_typesupport_introspection_cpp", info.introspection_library);
+  info.introspection_library = rosbag2_cpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
+  info.introspection_support = rosbag2_cpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp",
+                                                                   info.introspection_library);
 
   auto identifier = rosidl_typesupport_cpp::typesupport_identifier;
   info.support_library = rosbag2_cpp::get_typesupport_library(type_name, identifier);
-  info.type_support =
-      rosbag2_cpp::get_typesupport_handle(type_name, identifier, info.support_library);
+  info.type_support = rosbag2_cpp::get_typesupport_handle(type_name, identifier, info.support_library);
 
   info.has_header_stamp = TypeHasHeader(info.introspection_support);
   return info;
 }
 
-std::shared_ptr<PJ::MessageParser> CreateParserROS2(const PJ::ParserFactories& factories,
-                                                    const std::string& topic_name,
-                                                    const std::string& type_name,
-                                                    PJ::PlotDataMapRef& data)
+std::shared_ptr<PJ::MessageParser> CreateParserROS2(const PJ::ParserFactories& factories, const std::string& topic_name,
+                                                    const std::string& type_name, PJ::PlotDataMapRef& data)
 {
-  return factories.at("ros2msg")->createParser(topic_name, type_name, CreateSchema(type_name),
-                                               data);
+  return factories.at("ros2msg")->createParser(topic_name, type_name, CreateSchema(type_name), data);
 }

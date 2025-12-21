@@ -21,8 +21,7 @@ private:
   Ui::DialogWithItemList* ui;
 
 public:
-  explicit DialogWithItemList(QWidget* parent, QString title, QString text,
-                              std::unordered_set<std::string> list)
+  explicit DialogWithItemList(QWidget* parent, QString title, QString text, std::unordered_set<std::string> list)
     : QDialog(parent), ui(new Ui::DialogWithItemList)
   {
     QStringList name_list;

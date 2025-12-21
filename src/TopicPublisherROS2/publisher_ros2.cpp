@@ -62,8 +62,7 @@ void TopicPublisherROS2::updatePublishers()
     auto publisher_it = _publishers.find(info.topic_name);
     if (publisher_it == _publishers.end())
     {
-      _publishers.insert(
-          { info.topic_name, GenericPublisher::create(*_node, info.topic_name, info.type) });
+      _publishers.insert({ info.topic_name, GenericPublisher::create(*_node, info.topic_name, info.type) });
     }
   }
 
@@ -165,10 +164,8 @@ void TopicPublisherROS2::filterDialog()
     cb->setFocusPolicy(Qt::NoFocus);
     dialog->ui()->formLayout->addRow(new QLabel(QString::fromStdString(topic_name)), cb);
     checkbox.insert(std::make_pair(topic_name, cb));
-    connect(dialog->ui()->pushButtonSelect, &QPushButton::pressed,
-            [cb]() { cb->setChecked(true); });
-    connect(dialog->ui()->pushButtonDeselect, &QPushButton::pressed,
-            [cb]() { cb->setChecked(false); });
+    connect(dialog->ui()->pushButtonSelect, &QPushButton::pressed, [cb]() { cb->setChecked(true); });
+    connect(dialog->ui()->pushButtonDeselect, &QPushButton::pressed, [cb]() { cb->setChecked(false); });
   }
 
   dialog->exec();
@@ -248,11 +245,9 @@ void TopicPublisherROS2::broadcastTF(double current_time)
 
       const auto& msg_instance = std::any_cast<MessageRefPtr>(any_value);
 
-      auto tf_type_support =
-          rosidl_typesupport_cpp::get_message_type_support_handle<tf2_msgs::msg::TFMessage>();
+      auto tf_type_support = rosidl_typesupport_cpp::get_message_type_support_handle<tf2_msgs::msg::TFMessage>();
       tf2_msgs::msg::TFMessage tf_msg;
-      if (RMW_RET_OK !=
-          rmw_deserialize(msg_instance->serialized_data.get(), tf_type_support, &tf_msg))
+      if (RMW_RET_OK != rmw_deserialize(msg_instance->serialized_data.get(), tf_type_support, &tf_msg))
       {
         throw std::runtime_error("failed to deserialize TF message");
       }

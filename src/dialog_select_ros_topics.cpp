@@ -14,9 +14,8 @@
 #include "dialog_select_ros_topics.h"
 #include "ui_dialog_select_ros_topics.h"
 
-DialogSelectRosTopics::DialogSelectRosTopics(
-    const std::vector<std::pair<QString, QString>>& topic_list, const PJ::RosParserConfig& config,
-    QWidget* parent)
+DialogSelectRosTopics::DialogSelectRosTopics(const std::vector<std::pair<QString, QString>>& topic_list,
+                                             const PJ::RosParserConfig& config, QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::dialogSelectRosTopics)
   , _default_selected_topics(config.topics)
@@ -70,8 +69,7 @@ DialogSelectRosTopics::DialogSelectRosTopics(
     }
   });
 
-  connect(&_deselect_all, &QShortcut::activated, ui->listRosTopics,
-          &QAbstractItemView::clearSelection);
+  connect(&_deselect_all, &QShortcut::activated, ui->listRosTopics, &QAbstractItemView::clearSelection);
 
   on_spinBoxArraySize_valueChanged(ui->spinBoxArraySize->value());
 
@@ -190,18 +188,17 @@ void DialogSelectRosTopics::on_maximumSizeHelp_pressed()
 {
   QMessageBox msgBox;
   msgBox.setWindowTitle("Help");
-  msgBox.setText(
-      "Maximum Size of Arrays:\n\n"
-      "If the size of an Arrays is larger than this maximum value, the entire array is skipped.\n\n"
-      "This parameter is used to prevent the user from loading HUGE arrays, "
-      "such as images, pointclouds, maps, etc.\n"
-      "The term 'array' refers to the array in a message field,\n\n"
-      " See http://wiki.ros.org/msg.\n\n"
-      "This is NOT about the duration of a time series!\n\n"
-      "MOTIVATION: pretend that a user tries to load a RGB image, which probably contains "
-      "a few millions pixels.\n"
-      "Plotjuggler would naively create a single time series for each pixel of the image! "
-      "That makes no sense, of course, and it would probably freeze your system.\n");
+  msgBox.setText("Maximum Size of Arrays:\n\n"
+                 "If the size of an Arrays is larger than this maximum value, the entire array is skipped.\n\n"
+                 "This parameter is used to prevent the user from loading HUGE arrays, "
+                 "such as images, pointclouds, maps, etc.\n"
+                 "The term 'array' refers to the array in a message field,\n\n"
+                 " See http://wiki.ros.org/msg.\n\n"
+                 "This is NOT about the duration of a time series!\n\n"
+                 "MOTIVATION: pretend that a user tries to load a RGB image, which probably contains "
+                 "a few millions pixels.\n"
+                 "Plotjuggler would naively create a single time series for each pixel of the image! "
+                 "That makes no sense, of course, and it would probably freeze your system.\n");
   msgBox.exec();
 }
 

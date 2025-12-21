@@ -21,8 +21,7 @@ public:
 
   virtual const std::vector<const char*>& compatibleFileExtensions() const override;
 
-  virtual bool readDataFromFile(PJ::FileLoadInfo* fileload_info,
-                                PJ::PlotDataMapRef& destination) override;
+  virtual bool readDataFromFile(PJ::FileLoadInfo* fileload_info, PJ::PlotDataMapRef& destination) override;
 
   virtual const char* name() const override
   {

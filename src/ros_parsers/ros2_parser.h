@@ -28,7 +28,5 @@ std::string CreateSchema(const std::string& type_name);
 
 TopicInfo CreateTopicInfo(const std::string& topic_name, const std::string& type_name);
 
-std::shared_ptr<PJ::MessageParser> CreateParserROS2(const PJ::ParserFactories& factories,
-                                                    const std::string& topic_name,
-                                                    const std::string& type_name,
-                                                    PJ::PlotDataMapRef& data);
+std::shared_ptr<PJ::MessageParser> CreateParserROS2(const PJ::ParserFactories& factories, const std::string& topic_name,
+                                                    const std::string& type_name, PJ::PlotDataMapRef& data);

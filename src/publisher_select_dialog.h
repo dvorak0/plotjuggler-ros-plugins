@@ -19,8 +19,7 @@ private:
   Ui::PublisherSelect* _ui;
 
 public:
-  explicit PublisherSelectDialog(QWidget* parent = nullptr)
-    : QDialog(parent), _ui(new Ui::PublisherSelect)
+  explicit PublisherSelectDialog(QWidget* parent = nullptr) : QDialog(parent), _ui(new Ui::PublisherSelect)
   {
     _ui->setupUi(this);
   }

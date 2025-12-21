@@ -64,8 +64,7 @@ bool QNodeDialog::Connect(const std::string& ros_master_uri, const std::string& 
   if (!connected)
   {
     QMessageBox msgBox;
-    msgBox.setText(QString("Could not connect to the ros master [%1]")
-                       .arg(QString::fromStdString(ros_master_uri)));
+    msgBox.setText(QString("Could not connect to the ros master [%1]").arg(QString::fromStdString(ros_master_uri)));
     msgBox.exec();
   }
 

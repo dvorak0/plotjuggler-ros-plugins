@@ -70,8 +70,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& 
   }
   catch (std::runtime_error& ex)
   {
-    QMessageBox::warning(nullptr, tr("Error"),
-                         QString("rosbag::open thrown an exception:\n") + QString(ex.what()));
+    QMessageBox::warning(nullptr, tr("Error"), QString("rosbag::open thrown an exception:\n") + QString(ex.what()));
     return false;
   }
 
@@ -79,8 +78,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& 
 
   // Temporarily change the current directory as a workaround for rosbag2 relative directories not
   // working properly
-  std::vector<rosbag2_storage::TopicMetadata> topic_metadata =
-      temp_bag_reader->get_all_topics_and_types();
+  std::vector<rosbag2_storage::TopicMetadata> topic_metadata = temp_bag_reader->get_all_topics_and_types();
 
   std::unordered_map<std::string, std::string> topicTypesByName;
 
@@ -93,8 +91,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& 
 
   for (const rosbag2_storage::TopicMetadata& topic : topic_metadata)
   {
-    all_topics_qt.push_back(
-        { QString::fromStdString(topic.name), QString::fromStdString(topic.type) });
+    all_topics_qt.push_back({ QString::fromStdString(topic.name), QString::fromStdString(topic.type) });
     topicTypesByName.emplace(topic.name, topic.type);
 
     const auto& typesupport_identifier = rosidl_typesupport_cpp::typesupport_identifier;
@@ -111,8 +108,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& 
 
   if (!failed_topic_type.empty())
   {
-    QString msg(
-        "Can not recognize the following message types and those topics will be ignored:\n\n");
+    QString msg("Can not recognize the following message types and those topics will be ignored:\n\n");
     for (const auto& type : failed_topic_type)
     {
       msg += "  " + QString::fromStdString(type) + "\n";
@@ -177,10 +173,8 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& 
   progress_dialog.show();
   int msg_count = 0;
 
-  PJ::PlotDataAny& plot_consecutive =
-      plot_map.addUserDefined("plotjuggler::rosbag2_cpp::consecutive_messages")->second;
-  PJ::PlotDataAny& metadata_storage =
-      plot_map.addUserDefined("plotjuggler::rosbag2_cpp::topics_metadata")->second;
+  PJ::PlotDataAny& plot_consecutive = plot_map.addUserDefined("plotjuggler::rosbag2_cpp::consecutive_messages")->second;
+  PJ::PlotDataAny& metadata_storage = plot_map.addUserDefined("plotjuggler::rosbag2_cpp::topics_metadata")->second;
 
   // dirty trick. Store it in a one point timeseries
   metadata_storage.pushBack({ 0, std::any(topics_info) });

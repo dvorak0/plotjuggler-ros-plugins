@@ -23,14 +23,12 @@
 class GenericPublisher : public rclcpp::PublisherBase
 {
 public:
-  GenericPublisher(rclcpp::node_interfaces::NodeBaseInterface* node_base,
-                   const std::string& topic_name, const rosidl_message_type_support_t& type_support)
+  GenericPublisher(rclcpp::node_interfaces::NodeBaseInterface* node_base, const std::string& topic_name,
+                   const rosidl_message_type_support_t& type_support)
 #ifdef ROS_HUMBLE
-    : rclcpp::PublisherBase(node_base, topic_name, type_support,
-                            rcl_publisher_get_default_options())
+    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options())
 #else
-    : rclcpp::PublisherBase(node_base, topic_name, type_support,
-                            rcl_publisher_get_default_options(), callbacks_, true)
+    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options(), callbacks_, true)
 #endif
   {
   }
@@ -39,8 +37,7 @@ public:
 
   void publish(std::shared_ptr<rmw_serialized_message_t> message)
   {
-    auto return_code =
-        rcl_publish_serialized_message(get_publisher_handle().get(), message.get(), NULL);
+    auto return_code = rcl_publish_serialized_message(get_publisher_handle().get(), message.get(), NULL);
 
     if (return_code != RCL_RET_OK)
     {
@@ -51,13 +48,10 @@ public:
   static std::shared_ptr<GenericPublisher> create(rclcpp::Node& node, const std::string& topic_name,
                                                   const std::string& topic_type)
   {
-    auto library =
-        std::move(rosbag2_cpp::get_typesupport_library(topic_type, "rosidl_typesupport_cpp"));
-    auto type_support =
-        rosbag2_cpp::get_typesupport_handle(topic_type, "rosidl_typesupport_cpp", library);
+    auto library = std::move(rosbag2_cpp::get_typesupport_library(topic_type, "rosidl_typesupport_cpp"));
+    auto type_support = rosbag2_cpp::get_typesupport_handle(topic_type, "rosidl_typesupport_cpp", library);
 
-    return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name,
-                                              *type_support);
+    return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }
 
 #ifndef ROS_HUMBLE

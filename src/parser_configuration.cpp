@@ -73,12 +73,10 @@ void RosParserConfig::loadFromSettings(const QSettings& settings, QString prefix
   max_array_size = settings.value(prefix + "/max_array_size", 100).toInt();
   discard_large_arrays = settings.value(prefix + "/discard_large_arrays", true).toBool();
   boolean_strings_to_number = settings.value(prefix + "/boolean_strings_to_number", true).toBool();
-  remove_suffix_from_strings =
-      settings.value(prefix + "/remove_suffix_from_strings", true).toBool();
+  remove_suffix_from_strings = settings.value(prefix + "/remove_suffix_from_strings", true).toBool();
 }
 
-void CompositeParser::addParser(const std::string& topic_name,
-                                std::shared_ptr<PJ::MessageParser> parser)
+void CompositeParser::addParser(const std::string& topic_name, std::shared_ptr<PJ::MessageParser> parser)
 {
   parser->setLargeArraysPolicy(!_config.discard_large_arrays, _config.max_array_size);
   parser->enableEmbeddedTimestamp(_config.use_header_stamp);
@@ -102,8 +100,7 @@ void CompositeParser::setConfig(const RosParserConfig& config)
   }
 }
 
-bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef serialized_msg,
-                                   double& timestamp)
+bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef serialized_msg, double& timestamp)
 {
   auto it = _parsers.find(topic_name);
   if (it == _parsers.end())
@@ -117,8 +114,7 @@ bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef ser
 
 bool ParseDouble(const std::string& str, double& value, bool remover_suffix, bool parse_boolean)
 {
-  bool parsed = boost::spirit::qi::parse(str.data(), str.data() + str.size(),
-                                         boost::spirit::qi::double_, value);
+  bool parsed = boost::spirit::qi::parse(str.data(), str.data() + str.size(), boost::spirit::qi::double_, value);
 
   if (!parsed && remover_suffix)
   {
@@ -134,8 +130,7 @@ bool ParseDouble(const std::string& str, double& value, bool remover_suffix, boo
     }
     if (pos < str.size())
     {
-      parsed =
-          boost::spirit::qi::parse(str.data(), str.data() + pos, boost::spirit::qi::double_, value);
+      parsed = boost::spirit::qi::parse(str.data(), str.data() + pos, boost::spirit::qi::double_, value);
     }
   }
 
