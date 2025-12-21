@@ -146,6 +146,11 @@ void TopicPublisherROS2::filterDialog()
   dialog->ui()->radioButtonClock->setHidden(true);
   dialog->ui()->radioButtonHeaderStamp->setHidden(true);
 
+  // Sort topics alphabetically by topic name
+  std::vector<TopicInfo> sorted_topics = _topics_info;
+  std::sort(sorted_topics.begin(), sorted_topics.end(),
+            [](const TopicInfo& a, const TopicInfo& b) { return a.topic_name < b.topic_name; });
+
   std::map<std::string, QCheckBox*> checkbox;
 
   for (const TopicInfo& info : _topics_info)
