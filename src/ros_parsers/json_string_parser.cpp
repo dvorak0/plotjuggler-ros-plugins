@@ -40,7 +40,7 @@ bool JsonStringParser::parseRos2StringPayload(const PJ::MessageRef serialized_ms
   }
 
   const uint32_t cdr_header = ReadLe32(data);
-  if (cdr_header != 0x00010000 && cdr_header != 0x00000000)
+  if (cdr_header != 0x00010000 && cdr_header != 0x00000000 && cdr_header != 0x00000100)
   {
     qWarning().noquote() << QString("[%1] unexpected CDR encapsulation for std_msgs/String: 0x%2")
                                 .arg(topicPrefix())
