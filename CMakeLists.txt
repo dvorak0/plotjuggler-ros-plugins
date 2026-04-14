@@ -10,6 +10,7 @@ find_package(Boost REQUIRED)
 find_package(tf2_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(plotjuggler REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 
 cmake_policy (SET CMP0020 NEW)
