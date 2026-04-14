@@ -19,8 +19,6 @@ uint32_t ReadLe32(const uint8_t* ptr)
 JsonStringParser::JsonStringParser(const std::string& topic_name, PJ::PlotDataMapRef& data)
   : MessageParser(topic_name, data)
 {
-  qInfo().noquote() << QString("[JsonStringParser] created parser for topic=%1")
-                           .arg(QString::fromStdString(topic_name));
 }
 
 QString JsonStringParser::topicPrefix() const
@@ -128,11 +126,6 @@ void JsonStringParser::flattenJson(const nlohmann::json& value, const std::strin
 
 bool JsonStringParser::parseMessage(const PJ::MessageRef serialized_msg, double& timestamp)
 {
-  qInfo().noquote() << QString("[JsonStringParser] parseMessage topic=%1 size=%2 timestamp=%3")
-                           .arg(topicPrefix())
-                           .arg(serialized_msg.size())
-                           .arg(timestamp, 0, 'g', 17);
-
   std::string text;
   if (!parseRos2StringPayload(serialized_msg, text))
   {
@@ -158,10 +151,6 @@ bool JsonStringParser::parseMessage(const PJ::MessageRef serialized_msg, double&
                                 .arg(topicPrefix());
     return false;
   }
-
-  qInfo().noquote() << QString("[JsonStringParser] parsed JSON object topic=%1 keys=%2")
-                           .arg(topicPrefix())
-                           .arg(int(value.size()));
 
   flattenJson(value, "", timestamp);
   return true;
