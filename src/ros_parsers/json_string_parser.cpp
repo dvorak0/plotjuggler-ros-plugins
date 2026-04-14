@@ -40,7 +40,7 @@ bool JsonStringParser::parseRos2StringPayload(const PJ::MessageRef serialized_ms
   }
 
   const uint32_t cdr_header = ReadLe32(data);
-  if (cdr_header != 0x00010000 && cdr_header != 0x00000000)
+  if (cdr_header != 0x00010000 && cdr_header != 0x00000000 && cdr_header != 0x00000100)
   {
     qWarning().noquote() << QString("[%1] unexpected CDR encapsulation for std_msgs/String: 0x%2")
                                 .arg(topicPrefix())
@@ -76,7 +76,8 @@ void JsonStringParser::pushNumeric(const std::string& key, double timestamp, dou
     return;
   }
 
-  const QString qkey = QString::fromStdString(key);
+  const std::string series_name = _topic_name + "/" + key;
+  const QString qkey = QString::fromStdString(series_name);
   if (!_known_series.contains(qkey))
   {
     if (_known_series.size() >= qsizetype(_max_series))
@@ -89,7 +90,7 @@ void JsonStringParser::pushNumeric(const std::string& key, double timestamp, dou
     }
     _known_series.insert(qkey);
   }
-  getSeries(key).pushBack({ timestamp, value });
+  getSeries(series_name).pushBack({ timestamp, value });
 }
 
 void JsonStringParser::flattenJson(const nlohmann::json& value, const std::string& prefix,
