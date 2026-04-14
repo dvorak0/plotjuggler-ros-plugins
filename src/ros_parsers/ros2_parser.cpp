@@ -1,4 +1,5 @@
 #include "ros2_parser.h"
+#include "json_string_parser.h"
 
 #include <set>
 
@@ -162,5 +163,9 @@ TopicInfo CreateTopicInfo(const std::string& topic_name, const std::string& type
 std::shared_ptr<PJ::MessageParser> CreateParserROS2(const PJ::ParserFactories& factories, const std::string& topic_name,
                                                     const std::string& type_name, PJ::PlotDataMapRef& data)
 {
+  if (type_name == "std_msgs/msg/String" || type_name == "std_msgs/String")
+  {
+    return std::make_shared<JsonStringParser>(topic_name, data);
+  }
   return factories.at("ros2msg")->createParser(topic_name, type_name, CreateSchema(type_name), data);
 }

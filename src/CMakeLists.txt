@@ -17,6 +17,8 @@ add_library( commonROS STATIC
     parser_configuration.cpp
     parser_configuration.h
     ros_parsers/ros2_parser.cpp
+    ros_parsers/json_string_parser.cpp
+    ros_parsers/json_string_parser.h
     ${COMMON_UI_SRC}
 )
 
@@ -24,6 +26,7 @@ target_link_libraries( commonROS
     PUBLIC
         Qt5::Widgets
         Qt5::Xml
+        nlohmann_json::nlohmann_json
         rclcpp::rclcpp
         rcpputils::rcpputils
         rosbag2_transport::rosbag2_transport
