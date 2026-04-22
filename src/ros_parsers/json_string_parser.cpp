@@ -16,8 +16,9 @@ uint32_t ReadLe32(const uint8_t* ptr)
 }
 }
 
-JsonStringParser::JsonStringParser(const std::string& topic_name, PJ::PlotDataMapRef& data)
-  : MessageParser(topic_name, data)
+JsonStringParser::JsonStringParser(const std::string& topic_name, PJ::PlotDataMapRef& data,
+                                   PJ::MessageParserPtr fallback_parser)
+  : MessageParser(topic_name, data), _fallback_parser(std::move(fallback_parser))
 {
 }
 
@@ -138,19 +139,14 @@ bool JsonStringParser::parseMessage(const PJ::MessageRef serialized_msg, double&
   {
     value = nlohmann::json::parse(text);
   }
-  catch (const std::exception& ex)
+  catch (const std::exception&)
   {
-    qWarning().noquote() << QString("[%1] failed to parse JSON from std_msgs/String: %2")
-                                .arg(topicPrefix())
-                                .arg(ex.what());
-    return false;
+    return _fallback_parser ? _fallback_parser->parseMessage(serialized_msg, timestamp) : false;
   }
 
   if (!value.is_object())
   {
-    qWarning().noquote() << QString("[%1] expected top-level JSON object in std_msgs/String")
-                                .arg(topicPrefix());
-    return false;
+    return _fallback_parser ? _fallback_parser->parseMessage(serialized_msg, timestamp) : false;
   }
 
   flattenJson(value, "", timestamp);

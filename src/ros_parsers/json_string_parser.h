@@ -9,7 +9,8 @@
 class JsonStringParser : public PJ::MessageParser
 {
 public:
-  JsonStringParser(const std::string& topic_name, PJ::PlotDataMapRef& data);
+  JsonStringParser(const std::string& topic_name, PJ::PlotDataMapRef& data,
+                   PJ::MessageParserPtr fallback_parser);
 
   bool parseMessage(const PJ::MessageRef serialized_msg, double& timestamp) override;
 
@@ -21,4 +22,5 @@ private:
 
   size_t _max_series = 200;
   QSet<QString> _known_series;
+  PJ::MessageParserPtr _fallback_parser;
 };

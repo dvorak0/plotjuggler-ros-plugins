@@ -165,7 +165,8 @@ std::shared_ptr<PJ::MessageParser> CreateParserROS2(const PJ::ParserFactories& f
 {
   if (type_name == "std_msgs/msg/String" || type_name == "std_msgs/String")
   {
-    return std::make_shared<JsonStringParser>(topic_name, data);
+    auto fallback_parser = factories.at("ros2msg")->createParser(topic_name, type_name, CreateSchema(type_name), data);
+    return std::make_shared<JsonStringParser>(topic_name, data, fallback_parser);
   }
   return factories.at("ros2msg")->createParser(topic_name, type_name, CreateSchema(type_name), data);
 }
