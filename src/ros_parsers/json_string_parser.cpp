@@ -144,7 +144,7 @@ bool JsonStringParser::parseMessage(const PJ::MessageRef serialized_msg, double&
                                 .arg(topicPrefix())
                                 .arg(ex.what());
     // Fall back: publish raw string byte size as a series so nothing is silently dropped
-    pushNumeric("_raw_string", timestamp, static_cast<double>(text.size()));
+    pushNumeric("_len", timestamp, static_cast<double>(text.size()));
     return true;
   }
 
@@ -153,7 +153,7 @@ bool JsonStringParser::parseMessage(const PJ::MessageRef serialized_msg, double&
     qWarning().noquote() << QString("[%1] expected top-level JSON object in std_msgs/String")
                                 .arg(topicPrefix());
     // Fall back: publish raw string byte size as a series so nothing is silently dropped
-    pushNumeric("_raw_string", timestamp, static_cast<double>(text.size()));
+    pushNumeric("_len", timestamp, static_cast<double>(text.size()));
     return true;
   }
 
