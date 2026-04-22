@@ -143,18 +143,14 @@ bool JsonStringParser::parseMessage(const PJ::MessageRef serialized_msg, double&
     qWarning().noquote() << QString("[%1] failed to parse JSON from std_msgs/String: %2")
                                 .arg(topicPrefix())
                                 .arg(ex.what());
-    // Fall back: publish raw string byte size as a series so nothing is silently dropped
-    pushNumeric("_len", timestamp, static_cast<double>(text.size()));
-    return true;
+    return false;
   }
 
   if (!value.is_object())
   {
     qWarning().noquote() << QString("[%1] expected top-level JSON object in std_msgs/String")
                                 .arg(topicPrefix());
-    // Fall back: publish raw string byte size as a series so nothing is silently dropped
-    pushNumeric("_len", timestamp, static_cast<double>(text.size()));
-    return true;
+    return false;
   }
 
   flattenJson(value, "", timestamp);
